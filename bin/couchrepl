@@ -1,31 +1,30 @@
 #!/usr/bin/env node
 
-var mc = require("multicouch"),
+var mc = require('multicouch'),
     cmdline = require('commander'),
-    repl = require("repl"),
+    repl = require('repl'),
     couchr = require('../lib/couchrwrap');
 
 var opts = cmdline
     .usage('[options]')
-    .option("-i, --interactive", "repl couch interactive")
+    .option('-i, --interactive', 'repl couch interactive')
 .parse(process.argv);
 
 opts.port = 5984;
-opts.db_dir = "data";
+opts.db_dir = 'data';
 
 var couch_process = new mc(opts);
 
-
 couch_process.on('start', function(couch) {
-	var exp = repl.start({
-		    prompt: "repl couch > ",
-		    input: couch.stdin,
-		    output: couch.stdout
-		}).on('exit', function() {
-		    couch.on('stop', function() { process.exit(0); });
-		    couch_process.stop();
-		});
-	exp.context.couch = couchr;
-})
+  var exp = repl.start({
+        prompt: 'repl couch > ',
+        input: couch.stdin,
+        output: couch.stdout
+    }).on('exit', function() {
+        couch.on('stop', function() { process.exit(0); });
+        couch_process.stop();
+    });
+  exp.context.couch = couchr;
+});
 
 couch_process.start();
